@@ -10,7 +10,16 @@ export class TasksComponent implements OnInit {
   listTasks: Task[] = [];
   nameTask = '';
 
-  constructor() {}
+  constructor() {
+    const data = localStorage.getItem("tasks");
+    this.listTasks = (data ? JSON.parse(data): []).map(
+      (task: any) => new Task(task.name, task.state)
+    );
+  }
+
+  _commit(listTasks: Task[]) {
+    localStorage.setItem("tasks", JSON.stringify(listTasks))
+  }
 
   ngOnInit(): void {
     
@@ -28,14 +37,20 @@ export class TasksComponent implements OnInit {
 
     // reset form
     this.nameTask = '';
+
+    this._commit(this.listTasks)
   }
 
   deleteTask(index: number): void {
     this.listTasks.splice(index, 1);
+
+    this._commit(this.listTasks)
   }
 
   updateTask(task: Task, index: number):void {
-    this.listTasks[index].state = !task.state
+    this.listTasks[index].state = !task.state;
+
+    this._commit(this.listTasks)
   }
 
 }
